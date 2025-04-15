@@ -106,11 +106,15 @@ export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 
+
+export SSH_AUTH_SOCK=$(gpgconf --list-dirs agent-ssh-socket)
+gpgconf --launch gpg-agent
+
 ###########################
 #### Load Zsh Plugins #####
 ###########################
-source /usr/share/zsh/plugins/zsh-syntax-highlighting
-source /usr/share/zsh/plugins/zsh-autosuggestions
+source /usr/share/zsh/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 
 ###########################
