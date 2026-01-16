@@ -1,0 +1,123 @@
+{
+  "editor.fontFamily": "'FiraCode Nerd Font', 'Droid Sans Mono', 'monospace', monospace",
+  "editor.fontLigatures": true,
+  "files.autoSave": "onWindowChange",
+  "editor.tabCompletion": "on",
+  "editor.snippetSuggestions": "top",
+  "stylelint.enable": true,
+  "stylelint.validate": ["css", "less", "postcss", "scss"],
+  "intelephense.files.associations": ["*.php", "*.phtml"],
+  "[php]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+  },
+  "[javascript]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.formatOnPaste": false,
+    "editor.formatOnType": false,
+    "editor.formatOnSave": false
+  },
+  "[javascriptreact]": {
+    "editor.insertSpaces": true,
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+  "emmet.includeLanguages": {
+    "html": "true",
+    "javascript": "true",
+    "javascriptreact": "true",
+    "twig": "html"
+  },
+  "[json]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.tabSize": 2
+  },
+  "[yaml]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+  "[html]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+  "[dockercompose]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+  "[scss]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": "explicit"
+    },
+    "editor.defaultFormatter": "stylelint.vscode-stylelint",
+    "editor.tabSize": 2
+  },
+  "[markdown]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "files.trimTrailingWhitespace": false
+  },
+  "editor.largeFileOptimizations": false,
+  "files.associations": {
+    "*.html": "twig",
+    "**/roles/**/*.yml": "ansible",
+    "*.yml": "yaml"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode"
+  },
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "[css]": {
+    "editor.defaultFormatter": "stylelint.vscode-stylelint",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": "explicit"
+    }
+  },
+  "git.autofetch": true,
+  "[dart]": {
+    "editor.formatOnSave": false,
+    "editor.formatOnType": true,
+    "editor.rulers": [80],
+    "editor.selectionHighlight": false,
+    "editor.suggest.snippetsPreventQuickSuggestions": false,
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "onlySnippets",
+    "editor.wordBasedSuggestions": "off"
+  },
+  "diffEditor.maxComputationTime": 0,
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "[typescript]": {
+    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.formatOnSave": false,
+    "editor.tabSize": 2
+  },
+  "files.trimTrailingWhitespace": true,
+  "gitlens.telemetry.enabled": false,
+  "intelephense.telemetry.enabled": false,
+  "security.workspace.trust.untrustedFiles": "open",
+  "[css][scss]": {
+    "editor.codeActionsOnSave": {
+      "source.fixAll.stylelint": "explicit"
+    }
+  },
+
+  "git.openRepositoryInParentFolders": "never",
+  "explorer.compactFolders": false,
+  "workbench.colorTheme": "Bearded Theme Black & Emerald Soft",
+  "workbench.iconTheme": "material-icon-theme",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "debug.disassemblyView.showSourceCode": false,
+  "i18n-ally.displayLanguage": "se",
+  "gitlens.codeLens.recentChange.enabled": false,
+  "gitlens.codeLens.enabled": false,
+  "chat.commandCenter.enabled": false,
+  "window.titleBarStyle": "native",
+  "css.validate": false,
+  "telemetry.telemetryLevel": "all",
+  "window.customTitleBarVisibility": "never",
+  "material-icon-theme.files.associations": {
+    "*.neon": "phpstan"
+  }
+}
