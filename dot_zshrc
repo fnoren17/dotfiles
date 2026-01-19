@@ -102,10 +102,10 @@ source $ZSH/oh-my-zsh.sh
 
 #export ZSH_TMUX_AUTOSTART=true
 export GTK_THEME='Space-dark'
-export GTK2_RC_FILES=/home/felix/.themes/Sweet-Dark-v40/gtk-2.0/gtkrc
+export GTK2_RC_FILES=$HOME/.themes/Sweet-Dark-v40/gtk-2.0/gtkrc
 export QT_STYLE_OVERRIDE='Sweet-Dark-v40'
-export STARSHIP_CONFIG=/home/felix/.config/starship/starship.toml
-export XDG_CONFIG_HOME=/home/felix/.config
+export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
+export XDG_CONFIG_HOME=$HOME/.config
 export LC_ALL=en_US.UTF-8
 export QT_STYLE_OVERRIDE=kvantum-dark
 export INFISICAL_API_URL='http://infisical.dev.pipechain.net/api'
@@ -133,14 +133,14 @@ fastfetch
 
 ## [Completion]
 ## Completion scripts setup. Remove the following line to uninstall
-[[ -f /home/felix/.config/.dart-cli-completion/zsh-config.zsh ]] && . /home/felix/.config/.dart-cli-completion/zsh-config.zsh || true
+[[ -f $HOME/.config/.dart-cli-completion/zsh-config.zsh ]] && . $HOME/.config/.dart-cli-completion/zsh-config.zsh || true
 ## [/Completion]
 
 # bun completions
-[ -s "/home/felix/.bun/_bun" ] && source "/home/felix/.bun/_bun"
+[ -s "$HOME/.bun/_bun" ] && source "$HOME/.bun/_bun"
 
 # pnpm
-export PNPM_HOME="/home/felix/.local/share/pnpm"
+export PNPM_HOME="$HOME/.local/share/pnpm"
 case ":$PATH:" in
   *":$PNPM_HOME:"*) ;;
   *) export PATH="$PNPM_HOME:$PATH" ;;
