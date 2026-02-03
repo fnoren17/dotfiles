@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Since the screen setup differs between work and home,
+# this allows me to automatically get
+# my preferred setup on each location.
 CONFIG_DIR="$HOME/.config/hypr"
 
 HOME_MONITOR_SETUP="$CONFIG_DIR/monitors/home.conf"
@@ -76,7 +79,7 @@ configureMonitors() {
         PHILIPS_SETTINGS="2560x1440@59.95, 0x0, 1"
         PHILIPS_WITH_WEBCAM_SETTINGS="2560x1440@59.95, 2560x0, 1"
         AOC_SETTINGS="1920x1080@60, 5120x0, 1"
-        INTERNAL_MONITOR="monitor = eDP-1,3200x2000,7000x0, 1"
+        INTERNAL_MONITOR="monitor = eDP-1,3200x2000,7040x0, 1"
 
 
         echo $INTERNAL_MONITOR > "$WORK_MONITOR_SETUP"

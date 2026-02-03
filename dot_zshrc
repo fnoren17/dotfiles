@@ -101,7 +101,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 #export ZSH_TMUX_AUTOSTART=true
-export GTK_THEME='Space-dark'
+export GTK_THEME='Sweet-Dark'
 export GTK2_RC_FILES=$HOME/.themes/Sweet-Dark-v40/gtk-2.0/gtkrc
 export QT_STYLE_OVERRIDE='Sweet-Dark-v40'
 export STARSHIP_CONFIG=$HOME/.config/starship/starship.toml
@@ -146,3 +146,4 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+export PATH="$HOME/.local/bin:$PATH"
