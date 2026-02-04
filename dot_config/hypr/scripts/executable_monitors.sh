@@ -31,7 +31,7 @@ WORK_PHILIPS_SERIAL_NUMBER="UHB1719039234"
 
 moveworkspaces() {
     while IFS= read -r line; do
-    # Extrahera workspace-nummer och monitor från raden
+    # Get workspace number and monitor from the row
         workspace=$(echo "$line" | grep -oP 'workspace = \K\d+')
         monitor=$(echo "$line" | grep -oP 'monitor:\K\w+-?\w*')
 
@@ -44,7 +44,7 @@ done < "$CURRENT_WORKSPACE_CONFIG"
 }
 
 configureMonitors() {
-    internal_monitor="monitor = eDP-1,3200x2000,0x0, 1"
+    internal_monitor="monitor = eDP-1,3200x2000,0x0, 1.33"
 
     LG_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$HOME_LG_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
     ASUS_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$HOME_ASUS_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
