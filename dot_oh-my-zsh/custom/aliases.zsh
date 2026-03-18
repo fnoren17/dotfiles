@@ -9,8 +9,8 @@
 # cd $brainstormr
 #
 alias cm="chezmoi"
-alias asd="git add . && git commit -m 'asd' && git push"
 alias apps="cd $HOME/dev/apps"
+alias asd="git add . && (git diff --cached --quiet || git commit -m 'asd') && git push"
 alias core="cd $HOME/dev/core"
 alias common="cd $HOME/dev/common"
 alias appsc="apps && code ."
@@ -32,3 +32,4 @@ alias dps="docker ps --format 'table {{.ID}}\t{{.Names}}\t{{.Status}}\t{{.Ports}
 alias cat="/usr/bin/bat --theme=Dracula --tabs 2"
 alias cp="/usr/bin/xcp"
 alias vm_ware_services="sudo systemctl start vmware-networks.service && sudo systemctl start vmware-usbarbitrator.service && sudo modprobe -a vmw_vmci vmmon"
+alias rebase="asd && git checkout develop && git pull && git checkout - && git rebase develop"

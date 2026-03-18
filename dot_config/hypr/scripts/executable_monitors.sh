@@ -44,8 +44,6 @@ done < "$CURRENT_WORKSPACE_CONFIG"
 }
 
 configureMonitors() {
-    internal_monitor="monitor = eDP-1,3200x2000,0x0, 1.33"
-
     LG_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$HOME_LG_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
     ASUS_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$HOME_ASUS_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
 
@@ -59,12 +57,9 @@ configureMonitors() {
     # If LG and ASUS monitors with the predefined serial numbers are connected
     # It's quite safe to say that we are on the home setup
     if [ -n "$LG_SCREEN_NAME" ] && [ -n "$ASUS_SCREEN_NAME" ]; then
-        LG_SETTINGS="2560x1440@74.97, 3200x0, 1"
-        ASUS_SETTINGS="1920x1080@60, 5760x0, 1"
-        echo "$internal_monitor" > "$HOME_MONITOR_SETUP"
-        echo "monitor = $LG_SCREEN_NAME, $LG_SETTINGS" >> "$HOME_MONITOR_SETUP"
-        echo "monitor = $ASUS_SCREEN_NAME, $ASUS_SETTINGS" >> "$HOME_MONITOR_SETUP"
-        ln -sf "$HOME_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
+        sed -e "s/{{LG_SCREEN_NAME}}/$LG_SCREEN_NAME/g" \
+            -e "s/{{ASUS_SCREEN_NAME}}/$ASUS_SCREEN_NAME/g" \
+        "$HOME_MONITOR_SETUP" > "$CURRENT_MONITOR_CONFIG"
 
         # Create a temporary workspace config file, replace {{LG_MONITOR}}
         # and {{ASUS_MONITOR}} with the actual monitor names
@@ -76,18 +71,10 @@ configureMonitors() {
 
     # If these monitors are connected, it's safe to assume we are on the work setup
     elif [ -n "$PHILIPS_WITH_WEBCAM_SCREEN_NAME" ] && [ -n "$PHILIPS_SCREEN_NAME" ] && [ -n "$AOC_SCREEN_NAME" ]; then
-        PHILIPS_SETTINGS="2560x1440@59.95, 0x0, 1"
-        PHILIPS_WITH_WEBCAM_SETTINGS="2560x1440@59.95, 2560x0, 1"
-        AOC_SETTINGS="1920x1080@60, 5120x0, 1"
-        INTERNAL_MONITOR="monitor = eDP-1,3200x2000,7040x0, 1"
-
-
-        echo $INTERNAL_MONITOR > "$WORK_MONITOR_SETUP"
-        echo "monitor = $PHILIPS_SCREEN_NAME, $PHILIPS_SETTINGS" >> "$WORK_MONITOR_SETUP"
-        echo "monitor = $PHILIPS_WITH_WEBCAM_SCREEN_NAME, $PHILIPS_WITH_WEBCAM_SETTINGS" >> "$WORK_MONITOR_SETUP"
-        echo "monitor = $AOC_SCREEN_NAME, $AOC_SETTINGS" >> "$WORK_MONITOR_SETUP"
-
-        ln -sf "$WORK_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
+        sed -e "s/{{PHILIPS_SCREEN_NAME}}/$PHILIPS_SCREEN_NAME/g" \
+            -e "s/{{PHILIPS_WITH_WEBCAM_SCREEN_NAME}}/$PHILIPS_WITH_WEBCAM_SCREEN_NAME/g" \
+            -e "s/{{AOC_SCREEN_NAME}}/$AOC_SCREEN_NAME/g" \
+        "$WORK_MONITOR_SETUP" > "$CURRENT_MONITOR_CONFIG"
 
         # Create a temporary workspace config file, replace {{PHILIPS_MONITOR}}
         # and {{PHILIPS_WITH_WEBCAM_MONITOR}} with the actual monitor names
@@ -100,13 +87,12 @@ configureMonitors() {
         ln -sf "$TEMP_WORKSPACE_CONFIG" "$CURRENT_WORKSPACE_CONFIG"
 
     elif [ $connected_monitors -eq 1 ]; then
-        echo "$internal_monitor" > "$LAPTOP_MONITOR_SETUP"
-        ln -sf "$LAPTOP_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
+        cp "$LAPTOP_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
         ln -sf "$LAPTOP_WORKSPACE_SETUP" "$CURRENT_WORKSPACE_CONFIG"
 
     else
         # Unknown setup, use the random config
-        ln -sf "$RANDOM_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
+        cp "$RANDOM_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
 
     fi
 

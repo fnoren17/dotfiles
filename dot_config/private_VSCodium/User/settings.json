@@ -14,7 +14,7 @@
   "[javascript]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnPaste": false,
     "editor.formatOnType": false,
     "editor.formatOnSave": false
@@ -22,7 +22,7 @@
   "[javascriptreact]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "editor.defaultFormatter": "prettier.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "emmet.includeLanguages": {
     "html": "true",
@@ -31,17 +31,17 @@
     "twig": "html"
   },
   "[json]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.tabSize": 2
   },
   "[yaml]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[html]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[dockercompose]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[scss]": {
     "editor.codeActionsOnSave": {
@@ -51,7 +51,7 @@
     "editor.tabSize": 2
   },
   "[markdown]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode",
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
     "files.trimTrailingWhitespace": false
   },
   "editor.largeFileOptimizations": false,
@@ -61,7 +61,7 @@
     "*.yml": "yaml"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "prettier.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": "active",
@@ -119,5 +119,7 @@
   "window.customTitleBarVisibility": "never",
   "material-icon-theme.files.associations": {
     "*.neon": "phpstan"
-  }
+  },
+  "codeium.enableCodeLens": false,
+  "go.toolsManagement.autoUpdate": true
 }
