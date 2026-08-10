@@ -1,0 +1,101 @@
+// Zed keymap
+//
+// For information on binding keys, see the Zed
+// documentation: https://zed.dev/docs/key-bindings
+//
+// To see the default key bindings run `zed: open default keymap`
+// from the command palette.
+[
+  {
+    "context": "Workspace",
+    "bindings": {
+      //"ctrl-alt-o": "workspace::OpenFolder",
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "shift-alt-down": "editor::DuplicateLineDown",
+      "shift-alt-up": "editor::DuplicateLineUp",
+      // "ctrl-shift-enter": "emmet::WrapWithAbbreviation",
+      // "ctrl-7": "editor::ToggleLineComments",
+      // "ctrl-shift-up": "editor::AddCursorAbove",
+      // "ctrl-shift-down": "editor::AddCursorBelow",
+      "ctrl-alt-s": "workspace::SaveAll",
+      //"ctrl-alt-backspace": "editor::TrimTrailingWhitespace",
+      "ctrl-alt-f": "editor::Format",
+    },
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-shift-i": "editor::Format",
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-shift-down": [
+        "editor::AddSelectionBelow",
+        {
+          "skip_soft_wrap": true,
+        },
+      ],
+    },
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-shift-down": [
+        "editor::AddSelectionBelow",
+        {
+          "skip_soft_wrap": true,
+        },
+      ],
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-shift-up": [
+        "editor::AddSelectionAbove",
+        {
+          "skip_soft_wrap": true,
+        },
+      ],
+    },
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "alt-shift-up": [
+        "editor::AddSelectionAbove",
+        {
+          "skip_soft_wrap": true,
+        },
+      ],
+    },
+  },
+  {
+    "context": "Editor",
+    "bindings": {
+      "ctrl-7": [
+        "editor::ToggleComments",
+        {
+          "advance_downwards": false
+        }
+      ]
+    }
+  },
+  {
+    "context": "Editor",
+    "unbind": {
+      "ctrl-/": [
+        "editor::ToggleComments",
+        {
+          "advance_downwards": false
+        }
+      ]
+    }
+  }
+]
