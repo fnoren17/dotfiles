@@ -1,2 +1,2 @@
-.config/hypr/monitors/current.conf
-.config/hypr/workspaces/current.conf
+.config/hypr/config/monitors_current.lua
+.config/hypr/config/workspaces_current.lua

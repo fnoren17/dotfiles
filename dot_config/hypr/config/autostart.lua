@@ -10,6 +10,8 @@ hl.on("hyprland.start", function ()
     hl.exec_cmd("hypridle")
     hl.exec_cmd("nm-applet --indicator")
     hl.exec_cmd("systemctl --user start hyprpolkitagent")
+    -- Detects connected screens by serial and (re)generates the monitor +
+    -- workspace lua config - see scripts/monitors.sh
     hl.exec_cmd("$HOME/.config/hypr/scripts/monitors.sh")
     hl.exec_cmd("gsettings set org.gnome.desktop.interface gtk-theme 'Sweet-Dark'")
     hl.exec_cmd("gsettings set org.gnome.desktop.interface icon-theme 'candy-icons'")

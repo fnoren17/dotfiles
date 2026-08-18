@@ -1,23 +1,24 @@
 #!/bin/bash
 
-# Since the screen setup differs between work and home,
-# this allows me to automatically get
-# my preferred setup on each location.
+# Screen output names (DP-1, DP-2, ...) can be reassigned by the kernel/driver
+# between boots, and the setup differs between work and home too. This script
+# runs on every Hyprland start (and on hotplug, for portable machines) and
+# identifies screens by their serial number instead, then generates the
+# matching lua config on the fly.
 CONFIG_DIR="$HOME/.config/hypr"
 
-HOME_MONITOR_SETUP="$CONFIG_DIR/monitors/home.conf"
-WORK_MONITOR_SETUP="$CONFIG_DIR/monitors/work.conf"
-LAPTOP_MONITOR_SETUP="$CONFIG_DIR/monitors/laptop.conf"
-RANDOM_MONITOR_SETUP="$CONFIG_DIR/monitors/random.conf"
+HOME_MONITOR_TEMPLATE="$CONFIG_DIR/config/monitors/home.lua"
+DESKTOP_MONITOR_TEMPLATE="$CONFIG_DIR/config/monitors/desktop.lua"
+WORK_MONITOR_TEMPLATE="$CONFIG_DIR/config/monitors/work.lua"
+LAPTOP_MONITOR_TEMPLATE="$CONFIG_DIR/config/monitors/laptop.lua"
+RANDOM_MONITOR_TEMPLATE="$CONFIG_DIR/config/monitors/random.lua"
 
-HOME_WORKSPACE_SETUP="$CONFIG_DIR/workspaces/home.conf"
-LAPTOP_WORKSPACE_SETUP="$CONFIG_DIR/workspaces/laptop.conf"
-WORK_WORKSPACE_SETUP="$CONFIG_DIR/workspaces/work.conf"
+HOME_WORKSPACE_TEMPLATE="$CONFIG_DIR/config/workspaces/home.lua"
+WORK_WORKSPACE_TEMPLATE="$CONFIG_DIR/config/workspaces/work.lua"
+LAPTOP_WORKSPACE_TEMPLATE="$CONFIG_DIR/config/workspaces/laptop.lua"
 
-CURRENT_MONITOR_CONFIG="$CONFIG_DIR/monitors/current.conf"
-CURRENT_WORKSPACE_CONFIG="$CONFIG_DIR/workspaces/current.conf"
-TEMP_WORKSPACE_CONFIG="$CONFIG_DIR/workspaces/temp_current.conf"
-
+CURRENT_MONITOR_CONFIG="$CONFIG_DIR/config/monitors_current.lua"
+CURRENT_WORKSPACE_CONFIG="$CONFIG_DIR/config/workspaces_current.lua"
 
 DEBOUNCE_INTERVAL=2  # Time interval in seconds for debounce
 LAST_CALL_FILE="/tmp/monitor_event_last_call"  # Temporary file to track the last event time
@@ -29,18 +30,38 @@ WORK_AOC_SERIAL_NUMBER="F54G8BA002503"
 WORK_PHILIPS_WITH_WEBCAM_SERIAL_NUMBER="UHB1728049574"
 WORK_PHILIPS_SERIAL_NUMBER="UHB1719039234"
 
-moveworkspaces() {
-    while IFS= read -r line; do
-    # Get workspace number and monitor from the row
-        workspace=$(echo "$line" | grep -oP 'workspace = \K\d+')
-        monitor=$(echo "$line" | grep -oP 'monitor:\K\w+-?\w*')
+# Render $1 (a lua template with {{PLACEHOLDER}} tokens) into $2, substituting
+# each NAME=value pair passed after that. Writes via a temp file + mv so
+# Hyprland never reads a half-written file.
+renderTemplate() {
+    local template="$1" target="$2"
+    shift 2
 
-        echo "workspace: $workspace, monitor: $monitor"
+    local sedArgs=()
+    for pair in "$@"; do
+        local name="${pair%%=*}" value="${pair#*=}"
+        sedArgs+=(-e "s/{{${name}}}/${value}/g")
+    done
 
-    # Run hyprctl command to move each workspace to the specified monitor
-    hyprctl dispatch moveworkspacetomonitor "$workspace" "$monitor"
+    sed "${sedArgs[@]}" "$template" > "${target}.tmp"
+    mv "${target}.tmp" "$target"
+}
 
-done < "$CURRENT_WORKSPACE_CONFIG"
+# Parse the "workspace = "N", monitor = "X"" pairs out of a rendered
+# workspaces_current.lua and actively move each workspace - and any windows
+# already open on it - to its assigned monitor. hl.workspace_rule() alone
+# only affects newly created workspaces, so this is what makes an existing
+# workspace move along the moment its location is (re)detected. Requires
+# the target monitors to already be live, so must run after `hyprctl reload`.
+moveWorkspaces() {
+    local file="$1"
+    while read -r ws mon; do
+        # This build's hyprctl routes `dispatch` through its lua config
+        # engine, so the classic "moveworkspacetomonitor $ws $mon" CLI form
+        # no longer parses - it wants a real hl.dsp call, verified live:
+        # hl.dsp.workspace.move({ workspace = N, monitor = "NAME" })
+        hyprctl dispatch "hl.dsp.workspace.move({ workspace = ${ws}, monitor = \"${mon}\" })"
+    done < <(sed -n -E 's/.*workspace = "([0-9]+)".*monitor = "([^"]+)".*/\1 \2/p' "$file")
 }
 
 configureMonitors() {
@@ -51,57 +72,53 @@ configureMonitors() {
     PHILIPS_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$WORK_PHILIPS_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
     AOC_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$WORK_AOC_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
 
-
-
     connected_monitors=$(hyprctl monitors -j | jq '. | length')
-    # If LG and ASUS monitors with the predefined serial numbers are connected
-    # It's quite safe to say that we are on the home setup
-    if [ -n "$LG_SCREEN_NAME" ] && [ -n "$ASUS_SCREEN_NAME" ]; then
-        sed -e "s/{{LG_SCREEN_NAME}}/$LG_SCREEN_NAME/g" \
-            -e "s/{{ASUS_SCREEN_NAME}}/$ASUS_SCREEN_NAME/g" \
-        "$HOME_MONITOR_SETUP" > "$CURRENT_MONITOR_CONFIG"
+    edp_present=$(hyprctl monitors -j | jq -r '.[] | select(.name == "eDP-1") | .name')
+    local workspaces_updated=0
 
-        # Create a temporary workspace config file, replace {{LG_MONITOR}}
-        # and {{ASUS_MONITOR}} with the actual monitor names
-        # and then link it as the current workspace config
-        sed -e "s/{{LG_MONITOR}}/$LG_SCREEN_NAME/g" \
-            -e "s/{{ASUS_MONITOR}}/$ASUS_SCREEN_NAME/g" \
-        "$HOME_WORKSPACE_SETUP" > "$TEMP_WORKSPACE_CONFIG"
-        ln -sf "$TEMP_WORKSPACE_CONFIG" "$CURRENT_WORKSPACE_CONFIG"
+    # LG + ASUS with a laptop panel too -> laptop docked at home
+    if [ -n "$LG_SCREEN_NAME" ] && [ -n "$ASUS_SCREEN_NAME" ] && [ -n "$edp_present" ]; then
+        renderTemplate "$HOME_MONITOR_TEMPLATE" "$CURRENT_MONITOR_CONFIG" \
+            "LG_SCREEN_NAME=$LG_SCREEN_NAME" "ASUS_SCREEN_NAME=$ASUS_SCREEN_NAME"
+        renderTemplate "$HOME_WORKSPACE_TEMPLATE" "$CURRENT_WORKSPACE_CONFIG" \
+            "LG_MONITOR=$LG_SCREEN_NAME" "ASUS_MONITOR=$ASUS_SCREEN_NAME"
+        workspaces_updated=1
+
+    # LG + ASUS without a laptop panel -> the stationary desktop, permanently
+    # wired to these same two monitors. No workspace override needed here:
+    # the static fallback in config/workspaces.lua already targets MONITOR1,
+    # which the desktop template below sets correctly.
+    elif [ -n "$LG_SCREEN_NAME" ] && [ -n "$ASUS_SCREEN_NAME" ]; then
+        renderTemplate "$DESKTOP_MONITOR_TEMPLATE" "$CURRENT_MONITOR_CONFIG" \
+            "LG_SCREEN_NAME=$LG_SCREEN_NAME" "ASUS_SCREEN_NAME=$ASUS_SCREEN_NAME"
 
     # If these monitors are connected, it's safe to assume we are on the work setup
     elif [ -n "$PHILIPS_WITH_WEBCAM_SCREEN_NAME" ] && [ -n "$PHILIPS_SCREEN_NAME" ] && [ -n "$AOC_SCREEN_NAME" ]; then
-        sed -e "s/{{PHILIPS_SCREEN_NAME}}/$PHILIPS_SCREEN_NAME/g" \
-            -e "s/{{PHILIPS_WITH_WEBCAM_SCREEN_NAME}}/$PHILIPS_WITH_WEBCAM_SCREEN_NAME/g" \
-            -e "s/{{AOC_SCREEN_NAME}}/$AOC_SCREEN_NAME/g" \
-        "$WORK_MONITOR_SETUP" > "$CURRENT_MONITOR_CONFIG"
+        renderTemplate "$WORK_MONITOR_TEMPLATE" "$CURRENT_MONITOR_CONFIG" \
+            "PHILIPS_SCREEN_NAME=$PHILIPS_SCREEN_NAME" "PHILIPS_WITH_WEBCAM_SCREEN_NAME=$PHILIPS_WITH_WEBCAM_SCREEN_NAME" "AOC_SCREEN_NAME=$AOC_SCREEN_NAME"
+        renderTemplate "$WORK_WORKSPACE_TEMPLATE" "$CURRENT_WORKSPACE_CONFIG" \
+            "PHILIPS_MONITOR=$PHILIPS_SCREEN_NAME" "PHILIPS_WITH_WEBCAM_MONITOR=$PHILIPS_WITH_WEBCAM_SCREEN_NAME" "AOC_MONITOR=$AOC_SCREEN_NAME"
+        workspaces_updated=1
 
-        # Create a temporary workspace config file, replace {{PHILIPS_MONITOR}}
-        # and {{PHILIPS_WITH_WEBCAM_MONITOR}} with the actual monitor names
-        # and then link it as the current workspace config
-        sed -e "s/{{PHILIPS_MONITOR}}/$PHILIPS_SCREEN_NAME/g" \
-            -e "s/{{PHILIPS_WITH_WEBCAM_MONITOR}}/$PHILIPS_WITH_WEBCAM_SCREEN_NAME/g" \
-            -e "s/{{AOC_MONITOR}}/$AOC_SCREEN_NAME/g" \
-        "$WORK_WORKSPACE_SETUP" > "$TEMP_WORKSPACE_CONFIG"
-
-        ln -sf "$TEMP_WORKSPACE_CONFIG" "$CURRENT_WORKSPACE_CONFIG"
-
-    elif [ $connected_monitors -eq 1 ]; then
-        cp "$LAPTOP_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
-        ln -sf "$LAPTOP_WORKSPACE_SETUP" "$CURRENT_WORKSPACE_CONFIG"
+    elif [ "$connected_monitors" -eq 1 ]; then
+        cp "$LAPTOP_MONITOR_TEMPLATE" "$CURRENT_MONITOR_CONFIG"
+        cp "$LAPTOP_WORKSPACE_TEMPLATE" "$CURRENT_WORKSPACE_CONFIG"
+        workspaces_updated=1
 
     else
-        # Unknown setup, use the random config
-        cp "$RANDOM_MONITOR_SETUP" "$CURRENT_MONITOR_CONFIG"
-
+        # Unknown setup, use the random config. Leave workspace assignment
+        # as-is since we don't know which screen should get which workspace.
+        cp "$RANDOM_MONITOR_TEMPLATE" "$CURRENT_MONITOR_CONFIG"
     fi
 
-    # moveworkspaces
-
     hyprctl reload
+
+    # Actively relocate workspaces (and any windows already on them) to
+    # match the layout just applied - not just newly created ones.
+    if [ "$workspaces_updated" -eq 1 ]; then
+        moveWorkspaces "$CURRENT_WORKSPACE_CONFIG"
+    fi
 }
-
-
 
 # If multiple events come in within the debounce interval, only run `configureMonitors` from the last event
 debounced_configure() {
