@@ -14,6 +14,7 @@ LAPTOP_MONITOR_TEMPLATE="$CONFIG_DIR/config/monitors/laptop.lua"
 RANDOM_MONITOR_TEMPLATE="$CONFIG_DIR/config/monitors/random.lua"
 
 HOME_WORKSPACE_TEMPLATE="$CONFIG_DIR/config/workspaces/home.lua"
+DESKTOP_WORKSPACE_TEMPLATE="$CONFIG_DIR/config/workspaces/desktop.lua"
 WORK_WORKSPACE_TEMPLATE="$CONFIG_DIR/config/workspaces/work.lua"
 LAPTOP_WORKSPACE_TEMPLATE="$CONFIG_DIR/config/workspaces/laptop.lua"
 
@@ -85,12 +86,22 @@ configureMonitors() {
         workspaces_updated=1
 
     # LG + ASUS without a laptop panel -> the stationary desktop, permanently
-    # wired to these same two monitors. No workspace override needed here:
-    # the static fallback in config/workspaces.lua already targets MONITOR1,
-    # which the desktop template below sets correctly.
+    # wired to these same two monitors - this machine never hotplugs, it's
+    # only here because these dotfiles are shared with the portable laptop
+    # setups above/below. Workspace layout is fixed (1-5 on the LG, 6-10 on
+    # the ASUS); still (re)render workspaces_current.lua every start since
+    # output names (DP-2 vs DP-3) can shuffle between boots even with no
+    # cable ever touched - this also overwrites any stale rules left behind
+    # by a previous boot in a different mode (e.g. laptop-only, which pins
+    # 1-5 to eDP-1). No workspaces_updated=1 / moveWorkspaces here though:
+    # that's for reacting to a live hotplug event, which never happens on
+    # this machine - a plain hl.workspace_rule() applied at the next full
+    # Hyprland start (when workspaces get created fresh) is enough.
     elif [ -n "$LG_SCREEN_NAME" ] && [ -n "$ASUS_SCREEN_NAME" ]; then
         renderTemplate "$DESKTOP_MONITOR_TEMPLATE" "$CURRENT_MONITOR_CONFIG" \
             "LG_SCREEN_NAME=$LG_SCREEN_NAME" "ASUS_SCREEN_NAME=$ASUS_SCREEN_NAME"
+        renderTemplate "$DESKTOP_WORKSPACE_TEMPLATE" "$CURRENT_WORKSPACE_CONFIG" \
+            "LG_MONITOR=$LG_SCREEN_NAME" "ASUS_MONITOR=$ASUS_SCREEN_NAME"
 
     # If these monitors are connected, it's safe to assume we are on the work setup
     elif [ -n "$PHILIPS_WITH_WEBCAM_SCREEN_NAME" ] && [ -n "$PHILIPS_SCREEN_NAME" ] && [ -n "$AOC_SCREEN_NAME" ]; then

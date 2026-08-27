@@ -1,0 +1,15 @@
+-- Generated from this template by scripts/monitors.sh -> config/workspaces_current.lua
+-- Stationary desktop: workspace layout is fixed regardless of which output
+-- name (DP-2, DP-3, ...) the kernel assigns each monitor - 1-5 always on
+-- the LG UltraGear, 6-10 always on the ASUS.
+
+hl.workspace_rule({ workspace = "1", monitor = "{{LG_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "2", monitor = "{{LG_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "3", monitor = "{{LG_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "4", monitor = "{{LG_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "5", monitor = "{{LG_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "6", monitor = "{{ASUS_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "7", monitor = "{{ASUS_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "8", monitor = "{{ASUS_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "9", monitor = "{{ASUS_MONITOR}}", default = true, persistent = true })
+hl.workspace_rule({ workspace = "10", monitor = "{{ASUS_MONITOR}}", default = true, persistent = true })
