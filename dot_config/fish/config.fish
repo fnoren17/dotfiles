@@ -9,7 +9,6 @@ source /usr/share/cachyos-fish-config/cachyos-config.fish
 # Theming
 set -gx GTK_THEME 'Sweet-Dark'
 set -gx GTK2_RC_FILES $HOME/.themes/Sweet-Dark-v40/gtk-2.0/gtkrc
-set -gx QT_STYLE_OVERRIDE 'Sweet-Dark-v40'
 set -gx QT_STYLE_OVERRIDE kvantum-dark
 set -gx STARSHIP_CONFIG $HOME/.config/starship/starship.toml
 set -gx XDG_CONFIG_HOME $HOME/.config

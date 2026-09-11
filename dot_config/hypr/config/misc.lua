@@ -16,6 +16,9 @@ hl.config({
         force_default_wallpaper = -1,
         disable_hyprland_logo = false,
     },
+    render = {
+        direct_scanout = 2,
+    },
     xwayland = {
         force_zero_scaling = true
     },
