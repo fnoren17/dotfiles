@@ -8,6 +8,7 @@ vim.diagnostic.config({
 })
 
 
+---@type LazySpec
 return {
   {
     "williamboman/mason.nvim",

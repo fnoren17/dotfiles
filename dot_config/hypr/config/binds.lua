@@ -111,7 +111,9 @@ hl.bind("XF86MonBrightnessUp",   hl.dsp.exec_cmd(noctCall .. "brightness-up"),  
 hl.bind("XF86MonBrightnessDown", hl.dsp.exec_cmd(noctCall .. "brightness-down"), { locked = true, repeating = true })
 
 -- Lid switch
-hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("hyprlock --immediate"), { locked = true })
+-- switch:on = lid closed, switch:off = lid opened. See scripts/lid.sh
+hl.bind("switch:on:Lid Switch",  hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/lid.sh close"), { locked = true })
+hl.bind("switch:off:Lid Switch", hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/lid.sh open"),  { locked = true })
 
 -------------------
 ---- UTILITIES ----

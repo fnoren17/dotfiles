@@ -73,8 +73,8 @@ configureMonitors() {
     PHILIPS_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$WORK_PHILIPS_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
     AOC_SCREEN_NAME=$(hyprctl monitors -j | jq -r --arg serial "$WORK_AOC_SERIAL_NUMBER" '.[] | select(.description | test($serial)) | .name' | grep -v '^$')
 
-    connected_monitors=$(hyprctl monitors -j | jq '. | length')
-    edp_present=$(hyprctl monitors -j | jq -r '.[] | select(.name == "eDP-1") | .name')
+    connected_monitors=$(hyprctl monitors all -j | jq '. | length')
+    edp_present=$(hyprctl monitors all -j | jq -r '.[] | select(.name == "eDP-1") | .name')
     local workspaces_updated=0
 
     # LG + ASUS with a laptop panel too -> laptop docked at home

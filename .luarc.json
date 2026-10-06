@@ -1,7 +1,8 @@
 {
   "$schema": "https://raw.githubusercontent.com/LuaLS/vscode-lua/master/setting/schema.json",
-  "runtime.version": "LuaJIT",
+  "runtime.version": "Lua 5.4",
   "workspace.library": [
+    "/usr/share/hypr/stubs",
     "/usr/share/nvim/runtime/lua",
     "~/.local/share/nvim/lazy/lazy.nvim/lua"
   ],

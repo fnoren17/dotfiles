@@ -26,6 +26,7 @@ alias cp "/usr/bin/xcp"
 alias vm_ware_services "sudo systemctl start vmware-networks.service; and sudo systemctl start vmware-usbarbitrator.service; and sudo modprobe -a vmw_vmci vmmon"
 alias zed "zeditor"
 alias azstart "az vm start --resource-group rg-wvd-01 --name win11ms-0"
+alias gpr "git pull --rebase"
 
 # asd and rebase used a zsh `&&`/`(...||...)` chain that doesn't translate
 # cleanly to a one-line fish alias, so they're functions instead.

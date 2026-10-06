@@ -11,3 +11,28 @@
 -- variables.lua) already calls hl.monitor() for every screen in the
 -- detected layout. Before that first run, no monitor keyword is emitted
 -- here at all - Hyprland's own auto-arrangement covers the brief gap.
+
+-- Lid closed while external screens are connected (docked): turn the laptop
+-- panel off. Evaluated on every (re)load, so the `hyprctl reload` done by
+-- scripts/monitors.sh on hotplug and by scripts/lid.sh keeps it consistent.
+-- Laptop-only with the lid closed is left alone: lid.sh locks instead and
+-- logind suspends.
+local function lidClosed()
+    local f = io.open("/proc/acpi/button/lid/LID0/state")
+    if not f then return false end
+    local state = f:read("a")
+    f:close()
+    return state:find("closed") ~= nil
+end
+
+local function externalConnected()
+    local p = io.popen("grep -lx connected /sys/class/drm/card*-*/status 2>/dev/null | grep -v eDP")
+    if not p then return false end
+    local out = p:read("a")
+    p:close()
+    return out ~= ""
+end
+
+if lidClosed() and externalConnected() then
+    hl.monitor({ output = "eDP-1", disabled = true })
+end

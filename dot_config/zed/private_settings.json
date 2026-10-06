@@ -50,7 +50,6 @@
     "make": true,
     "material-icon-theme": true,
     "php": true,
-    "phpcs": true,
     "react-snippets-es7": true,
     "scss": true,
     "stylelint": true,
@@ -83,7 +82,7 @@
   "base_keymap": "VSCode",
   "autosave": "on_window_change",
   "buffer_font_family": "FiraCode Nerd Font",
-  "buffer_font_fallbacks": [".ZedMono"],
+  "buffer_font_fallbacks": ["Adwaita Mono"],
   "file_types": {
     "twig": ["*.html"],
     "ansible": ["**/roles/**/*.yml"],
@@ -92,6 +91,9 @@
   "colorize_brackets": true,
   "agent_servers": {
     "claude-acp": {
+      "default_config_options": {
+        "mode": "default"
+      },
       "type": "registry"
     }
   },
@@ -112,18 +114,20 @@
     "show_other_hints": true
   },
   "lsp": {
+    "lua-language-server": {
+      "settings": {
+        "Lua": {
+          "runtime": { "version": "Lua 5.4" },
+          "workspace": {
+            "library": ["/usr/share/hypr/stubs"],
+            "checkThirdParty": false
+          }
+        }
+      }
+    },
     "intelephense": {
       "initialization_options": {
         "storagePath": "/home/felix/.cache/intelephense"
-      }
-    },
-    "phpstan": {
-      "binary": {
-        "path": "/home/felix/dev/zed-extensions/phpstan-zed/target/release/phpstan-lsp-server"
-      },
-      "settings": {
-        "phpstan_path": "vendor/bin/phpstan",
-        "phpstan_memory_limit": "2G"
       }
     },
     "vtsls": {
@@ -152,15 +156,10 @@
     }
   },
   "tab_size": 2,
-  "formatter": {
-    "external": {
-      "command": "prettier",
-      "arguments": ["--stdin-filepath", "{buffer_path}"]
-    }
-  },
+
   "languages": {
     "PHP": {
-      "language_servers": ["!phpactor", "intelephense", "phpcs", "phpstan"],
+      "language_servers": ["phpantom", "!intelephense", "!phpactor", "!phptools", "..."],
       "tab_size": 4,
       "formatter": {
         "external": {

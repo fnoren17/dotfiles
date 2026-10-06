@@ -1,6 +1,6 @@
 -- Hyprland default apps
 
-TERMINAL     = "kitty"
+TERMINAL     = "alacritty"
 FILE_MANAGER = "nautilus"
 BROWSER      = "vivaldi-stable"
 EDITOR       = "gnome-text-editor --new-window"
