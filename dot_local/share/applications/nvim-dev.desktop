@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Neovim Dev
+Comment=Neovim with one tmux session per project in ~/dev
+Exec=/home/felix/.local/bin/nvim-dev
+Icon=nvim
+Terminal=false
+Categories=Development;TextEditor;
+Keywords=nvim;vim;editor;dev;
+StartupWMClass=nvim-dev

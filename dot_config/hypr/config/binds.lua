@@ -76,6 +76,7 @@ hl.bind(mainMod .. " + code:86", function() zoomfunction(0.3) end, { repeating =
 
 hl.bind(mainMod .. " + Return",     hl.dsp.exec_cmd(launchPrefix .. TERMINAL))
 hl.bind(mainMod .. " + E",          hl.dsp.exec_cmd(launchPrefix .. FILE_MANAGER))
+hl.bind(mainMod .. " + N",          hl.dsp.exec_cmd(launchPrefix .. "$HOME/.local/bin/nvim-dev"))
 hl.bind(mainMod .. " + T",          hl.dsp.exec_cmd(launchPrefix .. EDITOR))
 hl.bind(mainMod .. " + W",          hl.dsp.exec_cmd(launchPrefix .. BROWSER))
 hl.bind("CONTROL + SHIFT + Escape", hl.dsp.exec_cmd(launchPrefix .. TERMINAL .. " -e btop"))
@@ -89,6 +90,34 @@ hl.bind(mainMod .. " + R",          hl.dsp.exec_cmd("hyprpanel -q && hyprpanel")
 hl.bind(mainMod .. " + S",          hl.dsp.exec_cmd("systemctl suspend"))
 hl.bind(mainMod .. " + plus",       hl.dsp.exec_cmd("rofi -show calc -modi calc -no-show-match -no-sort"))
 hl.bind(mainMod .. " + B",          hl.dsp.exec_cmd("$HOME/.config/hypr/scripts/move_to_browser_workspace.sh"))
+
+-- 1Password: floating only when opened with Super+O, tiled from the launcher.
+-- The float rule is off by default and only switched on until the window opens.
+local onePasswordClass = "com.onepassword.OnePassword"
+local onePasswordFloat = hl.window_rule({
+    enabled = false,
+    match   = { class = "^(" .. onePasswordClass:gsub("%.", "\\.") .. ")$" },
+    float   = true,
+    center  = true,
+    size    = { "monitor_w*0.45", "monitor_h*0.65" },
+})
+
+hl.on("window.open", function(win)
+    if win and win.class == onePasswordClass then
+        onePasswordFloat:set_enabled(false)
+    end
+end)
+
+hl.bind(mainMod .. " + O", function()
+    if hl.get_window("class:^(" .. onePasswordClass .. ")$") then
+        hl.dispatch(hl.dsp.focus({ window = "class:^(" .. onePasswordClass .. ")$" }))
+        return
+    end
+    onePasswordFloat:set_enabled(true)
+    hl.exec_cmd(launchPrefix .. "1password")
+    -- Don't leave the rule on if the window never shows up
+    hl.timer(function() onePasswordFloat:set_enabled(false) end, { timeout = 10000, type = "oneshot" })
+end)
 
 ---------------------------
 ---- HARDWARE CONTROLS ----

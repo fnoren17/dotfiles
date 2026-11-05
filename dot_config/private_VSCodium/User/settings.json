@@ -121,5 +121,6 @@
     "*.neon": "phpstan"
   },
   "codeium.enableCodeLens": false,
-  "go.toolsManagement.autoUpdate": true
+  "go.toolsManagement.autoUpdate": true,
+  "git.a"
 }

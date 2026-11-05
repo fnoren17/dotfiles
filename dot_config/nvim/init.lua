@@ -1,5 +1,5 @@
-require("config.lazy")
-require("lazy").setup("plugins")
+-- Options first: mapleader must be set before lazy.nvim loads any plugin
 require("vim-options")
+require("config.lazy")
 require("keymaps")
-vim.wo.number = true
+require("autocmds")

@@ -1,0 +1,140 @@
+#!/usr/bin/env bash
+# nvim-dev – Neovim as a standalone app: one alacritty window (class nvim-dev)
+# running tmux, with one tmux session per project in ~/dev.
+#
+#   nvim-dev               focus the window, or open it (last session / picker)
+#   nvim-dev <project>     open <project> in the window
+#   nvim-dev pick          fzf picker over the projects (tmux: prefix + f)
+#   nvim-dev sync-desktop  (re)generate one launcher entry per project
+
+set -euo pipefail
+
+DEV_DIR="${NVIM_DEV_DIR:-$HOME/dev}"
+CLASS="nvim-dev"
+APPS_DIR="$HOME/.local/share/applications"
+
+projects() {
+    find "$DEV_DIR" -mindepth 1 -maxdepth 1 -type d -not -name '.*' -printf '%f\n' | sort
+}
+
+# tmux doesn't allow '.' or ':' in session names
+session_name() {
+    tr '.:' '__' <<< "$1"
+}
+
+window_exists() {
+    hyprctl clients -j | jq -e --arg class "$CLASS" 'any(.[]; .class == $class)' > /dev/null
+}
+
+focus_window() {
+    hyprctl dispatch "hl.dsp.focus({ window = \"class:^($CLASS)\$\" })" > /dev/null
+}
+
+open_window() {
+    export NVIM_DEV_WINDOW=1
+    exec alacritty --class "$CLASS" --title "Neovim Dev" -e "$@"
+}
+
+ensure_session() {
+    local project="$1" session
+    session=$(session_name "$project")
+    if [[ ! -d "$DEV_DIR/$project" ]]; then
+        notify-send "nvim-dev" "No such project: $DEV_DIR/$project"
+        exit 1
+    fi
+    if ! tmux has-session -t "=$session" 2> /dev/null; then
+        # Quitting nvim leaves a shell in the project instead of killing the session
+        tmux new-session -d -s "$session" -c "$DEV_DIR/$project" "nvim; exec $SHELL"
+    fi
+    echo "$session"
+}
+
+open_project() {
+    local session
+    session=$(ensure_session "$1")
+    if [[ -n "${TMUX:-}" ]]; then
+        tmux switch-client -t "=$session"
+    elif [[ -n "${NVIM_DEV_WINDOW:-}" ]]; then
+        # Picker running in a freshly opened nvim-dev window
+        exec tmux attach-session -t "=$session"
+    elif window_exists; then
+        tmux switch-client -t "=$session"
+        focus_window
+    else
+        open_window tmux attach-session -t "=$session"
+    fi
+}
+
+pick() {
+    local running choice
+    running=$(tmux list-sessions -F '#S' 2> /dev/null || true)
+    choice=$(projects | while read -r p; do
+        if grep -qxF "$(session_name "$p")" <<< "$running"; then
+            echo "● $p"
+        else
+            echo "  $p"
+        fi
+    done | fzf --reverse --no-sort --prompt "project> " --header "● = running") || exit 0
+    open_project "${choice:2}"
+}
+
+sync_desktop() {
+    mkdir -p "$APPS_DIR"
+    local keep=() p file
+    for p in $(projects); do
+        file="$APPS_DIR/nvim-dev-$p.desktop"
+        keep+=("$file")
+        cat > "$file" << DESKTOP
+[Desktop Entry]
+Type=Application
+Name=$p (Neovim)
+Comment=Open $DEV_DIR/$p in Neovim Dev
+Exec=$HOME/.local/bin/nvim-dev $p
+Icon=nvim
+Terminal=false
+Categories=Development;
+Keywords=nvim;vim;dev;project;
+StartupWMClass=$CLASS
+DESKTOP
+    done
+    # Remove entries for projects that no longer exist
+    for file in "$APPS_DIR"/nvim-dev-*.desktop; do
+        [[ -e "$file" ]] || continue
+        [[ " ${keep[*]} " == *" $file "* ]] || rm -f "$file"
+    done
+}
+
+require_deps() {
+    local cmd
+    for cmd in tmux fzf alacritty jq; do
+        if ! command -v "$cmd" > /dev/null; then
+            notify-send -u critical "nvim-dev" "Missing dependency: $cmd"
+            echo "nvim-dev: missing dependency: $cmd" >&2
+            exit 1
+        fi
+    done
+}
+
+[[ "${1:-}" == "sync-desktop" ]] || require_deps
+
+case "${1:-}" in
+    pick)
+        pick
+        ;;
+    sync-desktop)
+        sync_desktop
+        ;;
+    "")
+        sync_desktop &
+        if window_exists; then
+            focus_window
+        elif tmux has-session 2> /dev/null; then
+            open_window tmux attach-session
+        else
+            open_window "$0" pick
+        fi
+        ;;
+    *)
+        open_project "$1"
+        ;;
+esac

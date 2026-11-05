@@ -27,13 +27,14 @@ alias vm_ware_services "sudo systemctl start vmware-networks.service; and sudo s
 alias zed "zeditor"
 alias azstart "az vm start --resource-group rg-wvd-01 --name win11ms-0"
 alias gpr "git pull --rebase"
+alias log "cd $HOME/dev/devlog"
 
 # asd and rebase used a zsh `&&`/`(...||...)` chain that doesn't translate
 # cleanly to a one-line fish alias, so they're functions instead.
 function asd
     git add .
     if not git diff --cached --quiet
-        git commit -m 'asd'
+        git commit -m 'fix'
     end
     git push
 end
