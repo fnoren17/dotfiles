@@ -6,10 +6,17 @@
   "editor.snippetSuggestions": "top",
   "stylelint.enable": true,
   "stylelint.validate": ["css", "less", "postcss", "scss"],
-  "intelephense.files.associations": ["*.php", "*.phtml"],
+  "editor.formatOnSave": true,
+  "customLocalFormatters.formatters": [
+    {
+      "command": "docker exec -i core vendor/bin/phpcbf --standard=.phpcs.xml --stdin-path=${file} -",
+      "languages": ["php"],
+    },
+  ],
   "[php]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 4,
+    "editor.defaultFormatter": "jkillian.custom-local-formatters",
   },
   "[javascript]": {
     "editor.insertSpaces": true,
@@ -17,61 +24,61 @@
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnPaste": false,
     "editor.formatOnType": false,
-    "editor.formatOnSave": false
+    "editor.formatOnSave": false,
   },
   "[javascriptreact]": {
     "editor.insertSpaces": true,
     "editor.tabSize": 2,
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "emmet.includeLanguages": {
     "html": "true",
     "javascript": "true",
     "javascriptreact": "true",
-    "twig": "html"
+    "twig": "html",
   },
   "[json]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
   },
   "[yaml]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[dockercompose]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "[scss]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.stylelint": "explicit"
+      "source.fixAll.stylelint": "explicit",
     },
     "editor.defaultFormatter": "stylelint.vscode-stylelint",
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
   },
   "[markdown]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
-    "files.trimTrailingWhitespace": false
+    "files.trimTrailingWhitespace": false,
   },
   "editor.largeFileOptimizations": false,
   "files.associations": {
     "*.html": "twig",
     "**/roles/**/*.yml": "ansible",
-    "*.yml": "yaml"
+    "*.yml": "yaml",
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
   },
   "editor.bracketPairColorization.enabled": true,
   "editor.guides.bracketPairs": "active",
   "[css]": {
     "editor.defaultFormatter": "stylelint.vscode-stylelint",
     "editor.codeActionsOnSave": {
-      "source.fixAll.stylelint": "explicit"
-    }
+      "source.fixAll.stylelint": "explicit",
+    },
   },
-  "git.autofetch": true,
+  "git.autofetch": false,
   "[dart]": {
     "editor.formatOnSave": false,
     "editor.formatOnType": true,
@@ -80,27 +87,26 @@
     "editor.suggest.snippetsPreventQuickSuggestions": false,
     "editor.suggestSelection": "first",
     "editor.tabCompletion": "onlySnippets",
-    "editor.wordBasedSuggestions": "off"
+    "editor.wordBasedSuggestions": "off",
   },
   "diffEditor.maxComputationTime": 0,
   "[typescriptreact]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
   },
   "[typescript]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode",
     "editor.formatOnSave": false,
-    "editor.tabSize": 2
+    "editor.tabSize": 2,
   },
   "files.trimTrailingWhitespace": true,
   "gitlens.telemetry.enabled": false,
-  "intelephense.telemetry.enabled": false,
   "security.workspace.trust.untrustedFiles": "open",
   "[css][scss]": {
     "editor.codeActionsOnSave": {
-      "source.fixAll.stylelint": "explicit"
-    }
+      "source.fixAll.stylelint": "explicit",
+    },
   },
 
   "git.openRepositoryInParentFolders": "never",
@@ -118,9 +124,21 @@
   "telemetry.telemetryLevel": "all",
   "window.customTitleBarVisibility": "never",
   "material-icon-theme.files.associations": {
-    "*.neon": "phpstan"
+    "*.neon": "phpstan",
   },
   "codeium.enableCodeLens": false,
   "go.toolsManagement.autoUpdate": true,
-  "git.a"
+  "projectManager.git.baseFolders": ["~/dev"],
+  "claudeCode.preferredLocation": "panel",
+  "makefile.configureOnOpen": true,
+  "claudeCode.hideOnboarding": true,
+  "yaml.schemas": {
+    "file:///home/felix/.vscode-oss/extensions/continue.continue-2.0.0-linux-x64/config-yaml-schema.json": [
+      ".continue/**/*.yaml",
+    ],
+  },
+  "continue.enableTabAutocomplete": true,
+  "continue.enableNextEdit": false,
+  "redhat.telemetry.enabled": false,
+  "mistral-vibe-code.telemetry.enabled": false,
 }
